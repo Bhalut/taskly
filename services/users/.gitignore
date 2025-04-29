@@ -1,0 +1,26 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Environment files
+.env
+.env.*
+.venv
+venv/
+ENV/
+env/
+
+# Static files (Django apps)
+staticfiles/
+
+# Pytest cache
+.pytest_cache/
+
+# Django SQLite (por si acaso)
+db.sqlite3
+
+# Logs
+*.log
+
+# Instance folder (FastAPI apps)
+instance/
