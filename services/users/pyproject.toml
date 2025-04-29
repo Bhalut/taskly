@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "users"
+version = "0.1.0"
+description = ""
+authors = [
+    "Abdel Mejia <28445496+Bhalut@users.noreply.github.com>"
+]
+readme = "README.md"
+packages = [{include = "users", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+django = ">=5.2,<6.0"
+djangorestframework = ">=3.16.0,<4.0.0"
+psycopg2-binary = ">=2.9.10,<3.0.0"
+drf-spectacular = ">=0.28.0,<0.29.0"
+djangorestframework-simplejwt = ">=5.5.0,<6.0.0"
+python-decouple = ">=3.8,<4.0"
+whitenoise = ">=6.9.0,<7.0.0"
+django-cors-headers = ">=4.7.0,<5.0.0"
+gunicorn = "^23.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-django = "^4.11.1"
+pytest-cov = "^6.1.1"
+black = "^25.1.0"
+isort = "^6.0.1"
+flake8 = "^7.2.0"
+mypy = "^1.15.0"
+ruff = "^0.11.7"
+pre-commit = "^4.2.0"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+strict_optional = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "C90", "I", "N", "D", "UP"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
