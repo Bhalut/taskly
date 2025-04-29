@@ -1,0 +1,37 @@
+# No copiar control de versiones
+.git
+.gitignore
+
+# No copiar entornos virtuales locales
+.env
+.env.*
+.venv
+venv/
+ENV/
+env/
+
+# No copiar cachés
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# No copiar archivos de tests
+tests/
+
+# No copiar configuraciones de IDE
+.vscode/
+.idea/
+
+# No copiar archivos de CI
+.github/
+
+# No copiar archivos de documentación
+*.md
+
+# No copiar configuración local
+docker-compose.override.yml
+
+# No copiar media/static locales
+staticfiles/
+media/

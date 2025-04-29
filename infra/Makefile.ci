@@ -1,0 +1,32 @@
+# Environment and Compose file for CI
+ENV ?= ci
+COMPOSE_FILE = infra/docker-compose.ci.yml
+
+# Colors
+GREEN  = \033[0;32m
+YELLOW = \033[0;33m
+NC     = \033[0m
+
+help:
+	@echo ""
+	@echo "Usage: make [command]"
+	@echo ""
+	@echo "Commands:"
+	@echo "  build-cache    => Build services with cache hints for GitHub Actions"
+	@echo "  up             => Build and start services for testing"
+	@echo "  test           => Run tests inside the containers"
+	@echo ""
+
+build-cache:
+	@echo "$(YELLOW)Building Docker images with cache enabled...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) build --build-arg BUILDKIT_INLINE_CACHE=1
+
+up:
+	@echo "$(YELLOW)Starting services for CI testing...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) up --build --abort-on-container-exit
+
+test:
+	@echo "$(GREEN)Running tests...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) run --rm tasks poetry run pytest --cov=apps
+	docker-compose -f $(COMPOSE_FILE) run --rm users poetry run pytest --cov=apps
+	docker-compose -f $(COMPOSE_FILE) run --rm gateway poetry run pytest --cov=src

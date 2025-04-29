@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: taskly
+      POSTGRES_PASSWORD: taskly
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskly"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tasks:
+    build:
+      context: .
+      dockerfile: infra/docker/tasks.Dockerfile
+    command: /entrypoint.sh
+    volumes:
+      - static_volume:/app/staticfiles
+    env_file:
+      - ../services/tasks/.env.production
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      tasks:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  static_volume:

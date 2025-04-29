@@ -1,0 +1,82 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: taskly
+      POSTGRES_PASSWORD: taskly
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U taskly" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tasks:
+    build:
+      context: ../services/tasks
+      dockerfile: ../../infra/docker/tasks.Dockerfile
+    volumes:
+      - ../services/tasks:/app
+    env_file:
+      - ../services/tasks/.env
+    ports:
+      - "8000:8000"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/v1/health/" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  users:
+    build:
+      context: ../services/users
+      dockerfile: ../../infra/docker/users.Dockerfile
+    volumes:
+      - ../services/users:/app
+    env_file:
+      - ../services/users/.env
+    ports:
+      - "8001:8001"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8001/api/v1/health/" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: ../services/gateway
+      dockerfile: ../../infra/docker/gateway.Dockerfile
+    volumes:
+      - ../services/gateway:/app
+    env_file:
+      - ../services/gateway/.env
+    ports:
+      - "8002:8002"
+    depends_on:
+#      db:
+#        condition: service_healthy
+#      tasks:
+#        condition: service_healthy
+#      users:
+#        condition: service_healthy
+      - db
+      - tasks
+      - users
+
+volumes:
+  postgres_data:

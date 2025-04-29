@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: taskly
+      POSTGRES_PASSWORD: taskly
+    volumes:
+      - postgres_data_ci:/var/lib/postgresql/data
+      - ./infra/docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskly"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  tasks:
+    build:
+      context: .
+      dockerfile: infra/docker/tasks.Dockerfile
+      cache_from:
+        - taskly_tasks_ci_cache
+    command: poetry run pytest --cov=apps
+    volumes:
+      - ./services/tasks:/app
+    env_file:
+      - ../services/tasks/.env.ci
+    depends_on:
+      db:
+        condition: service_healthy
+
+  users:
+    build:
+      context: .
+      dockerfile: infra/docker/users.Dockerfile
+      cache_from:
+        - taskly_users_ci_cache
+    command: poetry run pytest --cov=apps
+    volumes:
+      - ./services/users:/app
+    env_file:
+      - ../services/users/.env.ci
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: .
+      dockerfile: infra/docker/gateway.Dockerfile
+      cache_from:
+        - taskly_gateway_ci_cache
+    command: poetry run pytest --cov=src
+    volumes:
+      - ./services/gateway:/app
+    env_file:
+      - ../services/gateway/.env.ci
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data_ci:
