@@ -1,0 +1,67 @@
+[project]
+name = "gateway"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Abdel Mejia",email = "28445496+Bhalut@users.noreply.github.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "slowapi (>=0.1.9,<0.2.0)",
+    "pydantic-settings (>=2.9.1,<3.0.0)",
+    "fastapi (>=0.115.12,<0.116.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "uvicorn (>=0.34.2,<0.35.0)"
+]
+
+[tool.poetry]
+name = "gateway"
+version = "0.1.0"
+description = ""
+authors = ["Abdel Mejia <28445496+Bhalut@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "gateway", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+slowapi = ">=0.1.9,<0.2.0"
+pydantic-settings = ">=2.9.1,<3.0.0"
+fastapi = "^0.115.12"
+httpx = "^0.28.1"
+uvicorn = "^0.34.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-cov = "^6.1.1"
+black = "^25.1.0"
+isort = "^6.0.1"
+flake8 = "^7.2.0"
+mypy = "^1.15.0"
+ruff = "^0.11.7"
+pre-commit = "^4.2.0"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+strict_optional = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "C90", "I", "N", "D", "UP"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
